@@ -11,7 +11,7 @@ export class Test {
 }
 
 export class TestController {
-    @route.get("")
+    @route.get()
     get() {
         return { messages: "Hello world!" }
     }

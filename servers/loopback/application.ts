@@ -10,7 +10,7 @@ export class LoopbackApplication extends BootMixin(ServiceMixin(RepositoryMixin(
         this.projectRoot = __dirname;
         this.bootOptions = {
             controllers: {
-                dirs: ['.'],
+                dirs: ['controllers'],
                 extensions: ['.controller.js'],
                 nested: true,
             },
