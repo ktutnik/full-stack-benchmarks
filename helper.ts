@@ -4,6 +4,10 @@ import { fork } from "child_process";
 
 export type BenchmarkOption = CannonOption & { baseFramework:string, path: string, silent?: boolean, env?: any }
 
+function delay(ms:number = 2000){
+    return new Promise(resolve => setTimeout(resolve, 2000))
+}
+
 function cannonAsync(opts: CannonOption) {
     return new Promise<CannonResult>((resolve, reject) => {
         cannon({ ...opts }, (err, result) => {
@@ -16,9 +20,10 @@ function cannonAsync(opts: CannonOption) {
 export async function benchmark(opt: BenchmarkOption) {
     const { path, silent, env, ...opts } = opt
     const process = fork(path, [], { silent, env })
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await delay()
     const result = await cannonAsync(opts)
     process.kill('SIGINT')
+    await delay()
     return {
         title: result.title,
         requests: result.requests.average,

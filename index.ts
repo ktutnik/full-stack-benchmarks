@@ -38,7 +38,7 @@ function getCost(base: { requests: number }, current: { requests: number }) {
 
 async function benchGroup(path: string, option: BenchmarkOption) {
     const baseResult = await cannon({ ...option, path })
-    console.log(basename(path), baseResult.requests, baseResult.stats)
+    console.log(basename(path).padEnd(15), baseResult.requests.toString().padEnd(9), baseResult.stats)
     const servers = getDirs(path)
     const results: BenchResult[] = []
     for (const server of servers) {
@@ -49,7 +49,7 @@ async function benchGroup(path: string, option: BenchmarkOption) {
             requests: result.requests,
             cost: getCost(baseResult, result)
         })
-        console.log(name, result.requests, result.stats)
+        console.log(name.padEnd(15), result.requests.toString().padEnd(9), result.stats)
     }
     return results
 }
@@ -62,10 +62,11 @@ async function benchGroup(path: string, option: BenchmarkOption) {
         result.push(...await benchGroup(base, defaultGetOption))
         result.push(...await benchGroup(base, defaultPostOption))
     }
+    console.log()
     console.log(
         "Server".padEnd(12),
         "Method".padEnd(10),
-        "Score (Req/s)".padEnd(9),
+        "Req/s".padEnd(9),
         "Cost (%)".padEnd(9))
     for (const opt of result) {
         console.log(
