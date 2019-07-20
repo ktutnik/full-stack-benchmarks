@@ -5,13 +5,13 @@
 
 ## Setup
 
-| Framework  | Router     | Body Parser | Validator       | Converter         |
-| ---------- | ---------- | ----------- | --------------- | ----------------- |
-| Koa        | koa-router | koa-body    | joi             | joi               |
-| Express    | Built-in   | body-parser | joi             | joi               |
-| Plumier    | Built-in   | koa-body    | Built-in        | Built-in          |
-| Loopback 4 | Built-in   | Built-in    | Built-in        | Built-in          |
-| Nest       | Built-in   | Built-in    | class-validator | class-transformer |
+| Framework  | Router     | Body Parser | Validator |
+| ---------- | ---------- | ----------- | --------- |
+| Koa        | koa-router | koa-body    | joi       |
+| Express    | Built-in   | body-parser | joi       |
+| Plumier    | Built-in   | Built-in    | Built-in  |
+| Loopback 4 | Built-in   | Built-in    | Built-in  |
+| Nest       | Built-in   | Built-in    | Built-in  |
 
 
 ## Result
