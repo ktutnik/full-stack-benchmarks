@@ -1,6 +1,7 @@
-import { BenchmarkOption, benchmark as cannon } from "./helper"
+import { BenchmarkOption, benchmark } from "./helper"
 import { readdirSync } from "fs";
 import { join, basename } from "path";
+import numeral from "numeral"
 
 // --------------------------------------------------------------------- //
 // ------------------------- BENCHMARK OPTIONS ------------------------- //
@@ -24,7 +25,7 @@ const defaultPostOption = <BenchmarkOption>{
     })
 }
 
-interface BenchResult { name: string, method: string, requests: number, cost: number }
+interface BenchResult { name: string, base:string, method: string, requests: number, cost: number }
 
 function getDirs(root: string) {
     return readdirSync(root, { withFileTypes: true })
@@ -37,42 +38,58 @@ function getCost(base: { requests: number }, current: { requests: number }) {
 }
 
 async function benchGroup(path: string, option: BenchmarkOption) {
-    const baseResult = await cannon({ ...option, path })
-    console.log(basename(path).padEnd(15), baseResult.requests.toString().padEnd(9), baseResult.stats)
+    const baseResult = await benchmark({ ...option, path })
+    const baseName = basename(path)
+    //console.log(baseName.padEnd(15), baseResult.requests.toString().padEnd(9), baseResult.stats)
     const servers = getDirs(path)
-    const results: BenchResult[] = []
+    const results: BenchResult[] = [{
+        name: baseName, cost: 0,
+        requests: baseResult.requests, 
+        method: option.method, base: ""
+    }]
     for (const server of servers) {
-        const result = await cannon({ ...option, path: server })
+        const result = await benchmark({ ...option, path: server })
         const name = basename(server)
         results.push(<BenchResult>{
             name, method: option.method,
             requests: result.requests,
-            cost: getCost(baseResult, result)
+            cost: getCost(baseResult, result),
+            base:baseName
         })
-        console.log(name.padEnd(15), result.requests.toString().padEnd(9), result.stats)
+        //console.log(name.padEnd(15), result.requests.toString().padEnd(9), result.stats)
     }
     return results
 }
 
 
-(async () => {
+async function print(option:BenchmarkOption){
     const serverBase = getDirs(join(__dirname, "servers"))
-    const result: BenchResult[] = []
-    for (const base of serverBase) {
-        result.push(...await benchGroup(base, defaultGetOption))
-        result.push(...await benchGroup(base, defaultPostOption))
+    const result :BenchResult[] =[]
+    for (const path of serverBase) {
+        result.push(...await benchGroup(path, option))
     }
     console.log()
     console.log(
         "Server".padEnd(12),
+        "Base".padEnd(12),
         "Method".padEnd(10),
-        "Req/s".padEnd(9),
-        "Cost (%)".padEnd(9))
-    for (const opt of result) {
+        "Req/s".padStart(9),
+        "Cost (%)".padStart(9))
+    const ordered = result.sort((a, b) => b.requests - a.requests)
+    for (const opt of ordered) {
         console.log(
             opt.name.padEnd(12),
+            opt.base.padEnd(12),
             opt.method.padEnd(10),
-            opt.requests.toString().padEnd(9),
-            opt.cost.toString().padEnd(9))
+            numeral(opt.requests).format("0.00").padStart(9),
+            numeral(opt.cost).format("0.00").padStart(9))
+    }
+}
+
+(async () => {
+    for (const opt of [defaultGetOption, defaultPostOption]) {
+        console.log()
+        console.log(`Benchmark ${opt.method} method`)
+        await print(opt)
     }
 })()

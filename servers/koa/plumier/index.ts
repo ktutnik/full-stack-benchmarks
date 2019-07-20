@@ -37,5 +37,8 @@ export class TestController {
 new Plumier()
     .set(new WebApiFacility({ controller: TestController }))
     .initialize()
-    .then(x => x.listen(3000))
+    .then(x => {
+        x.on("error", e => {})
+        x.listen(3000)
+    })
     .catch(e => console.error(e))
