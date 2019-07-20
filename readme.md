@@ -1,9 +1,15 @@
 # Full Stack TypeScript Framework Benchmarks
-
+This benchmark intended to test full stack functionalities of a framework. This benchmark tests framework efficiency on routing request, parsing request body, validating data or converting data into expected type. 
 
 ## Framework Cost
+Most TypeScript framework uses other framework as its core http server such as Loopback uses Express as its core http server, Nest has an ability to dynamically change the core framework etc, thats make req/s of frameworks vary based on its core http server speed.  
+
+Since frameworks uses vary core http server, the req/s score can't be use as a indicator of an efficient framework.
+
+**Framework Cost** is score of framework inefficiency (the lower the better). It is percentage of req/sec lost from its core http server. 
 
 ## Setup
+To get a proper framework cost calculation, Koa and Express included in this benchmark also prepared with router, body parser and validator like below:
 
 | Framework  | Router     | Body Parser | Validator |
 | ---------- | ---------- | ----------- | --------- |
@@ -13,8 +19,15 @@
 | Loopback 4 | Built-in   | Built-in    | Built-in  |
 | Nest       | Built-in   | Built-in    | Built-in  |
 
+## Running the Benchmark
+To run the benchmark make sure you have Git and Node.js installed in your machine. 
+
+* Git clone this project.
+* Install dependencies `npm install`
+* Start the project `npm start`
 
 ## Result
+This benchmark result ran using Macbook Pro 15 with Node.js 10
 
 ```
 $ ts-node .
