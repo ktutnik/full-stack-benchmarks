@@ -1,4 +1,4 @@
-# TypeScript Frameworks Full-Stack Benchmark
+# Full Stack TypeScript Framework Benchmarks
 
 
 ## Framework Cost
