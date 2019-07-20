@@ -1,6 +1,6 @@
-import { BenchmarkOption, benchmark } from "./helper"
+import { BenchmarkOption, benchmark as cannon } from "./helper"
 import { readdirSync } from "fs";
-import { join } from "path";
+import { join, basename } from "path";
 
 // --------------------------------------------------------------------- //
 // ------------------------- BENCHMARK OPTIONS ------------------------- //
@@ -12,39 +12,66 @@ const defaultOption = <BenchmarkOption>{
     silent: true,
     env: { NODE_ENV: "production" }
 }
-
-const servers = readdirSync(join(__dirname, "servers"), { withFileTypes: true })
-    .filter(x => x.isDirectory())
-    .map(x => join(__dirname, "servers", x.name))
-
-const getOptions = servers.map(x => <BenchmarkOption>{ ...defaultOption, method: "GET", path: x })
-
-const postOptions = servers.map(x => <BenchmarkOption>{
+const defaultGetOption = <BenchmarkOption>{ ...defaultOption, method: "GET" }
+const defaultPostOption = <BenchmarkOption>{
     ...defaultOption, method: "POST",
-    headers: { "Content-Type": "application/json" }, 
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
         boolean: true,
         number: 1234567,
         string: "Hello world!",
         date: '2019-07-19T19:51:45Z'
-    }),
-    path: x
-});
+    })
+}
+
+interface BenchResult { name: string, method: string, requests: number, cost: number }
+
+function getDirs(root: string) {
+    return readdirSync(root, { withFileTypes: true })
+        .filter(x => x.isDirectory())
+        .map(x => join(root, x.name))
+}
+
+function getCost(base: { requests: number }, current: { requests: number }) {
+    return ((base.requests - current.requests) / base.requests) * 100
+}
+
+async function benchGroup(path: string, option: BenchmarkOption) {
+    const baseResult = await cannon({ ...option, path })
+    console.log(basename(path), baseResult.requests, baseResult.stats)
+    const servers = getDirs(path)
+    const results: BenchResult[] = []
+    for (const server of servers) {
+        const result = await cannon({ ...option, path: server })
+        const name = basename(server)
+        results.push(<BenchResult>{
+            name, method: option.method,
+            requests: result.requests,
+            cost: getCost(baseResult, result)
+        })
+        console.log(name, result.requests, result.stats)
+    }
+    return results
+}
 
 
 (async () => {
-    const options = getOptions.concat(postOptions)
+    const serverBase = getDirs(join(__dirname, "servers"))
+    const result: BenchResult[] = []
+    for (const base of serverBase) {
+        result.push(...await benchGroup(base, defaultGetOption))
+        result.push(...await benchGroup(base, defaultPostOption))
+    }
     console.log(
         "Server".padEnd(12),
-        "Req/s".padEnd(9),
-        "Method".padEnd(6),
-        "Request Stats")
-    for (const opt of options) {
-        const result = await benchmark(opt)
+        "Method".padEnd(10),
+        "Score (Req/s)".padEnd(9),
+        "Cost (%)".padEnd(9))
+    for (const opt of result) {
         console.log(
-            result.server.padEnd(12),
-            result.requests.toString().padEnd(9),
-            opt.method!.padEnd(6),
-            result.stats)
+            opt.name.padEnd(12),
+            opt.method.padEnd(10),
+            opt.requests.toString().padEnd(9),
+            opt.cost.toString().padEnd(9))
     }
 })()
