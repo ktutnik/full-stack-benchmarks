@@ -89,7 +89,7 @@ async function print(option:BenchmarkOption){
 (async () => {
     for (const opt of [defaultGetOption, defaultPostOption]) {
         console.log()
-        console.log(`Benchmark ${opt.method} method`)
+        console.log(`${opt.method} method benchmark starting...`)
         await print(opt)
     }
 })()
