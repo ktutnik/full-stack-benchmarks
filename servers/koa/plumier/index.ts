@@ -1,4 +1,4 @@
-import Plumier, { domain, route, WebApiFacility } from "plumier"
+import Plumier, { domain, route, WebApiFacility, val } from "plumier"
 
 // --------------------------------------------------------------------- //
 // ------------------------------- DOMAIN ------------------------------ //
@@ -7,9 +7,13 @@ import Plumier, { domain, route, WebApiFacility } from "plumier"
 @domain()
 export class Test {
     constructor(
+        @val.required()
         public boolean: boolean,
+        @val.required()
         public number: number,
+        @val.required()
         public string: string,
+        @val.required()
         public date: Date
     ) { }
 }
@@ -38,7 +42,6 @@ new Plumier()
     .set(new WebApiFacility({ controller: TestController }))
     .initialize()
     .then(x => {
-        x.on("error", e => {})
         x.listen(3000)
     })
     .catch(e => console.error(e))
