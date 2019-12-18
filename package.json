@@ -23,7 +23,7 @@
     "joi": "^14.3.1",
     "koa-router": "^7.4.0",
     "numeral": "^2.0.6",
-    "plumier": "1.0.0-dev11.14",
+    "plumier": "1.0.0-dev11.21",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.3"
   },
