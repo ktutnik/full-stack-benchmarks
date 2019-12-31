@@ -1,4 +1,3 @@
-import Cors from "@koa/cors"
 import Joi from "joi"
 import Koa from "koa"
 import bodyParser from "koa-body"
@@ -22,7 +21,6 @@ const routes = new Router()
 
 new Koa()
     .use(bodyParser())
-    .use(Cors())
     .use(routes.routes())
     .on("error", e => {})
     .listen(3000)

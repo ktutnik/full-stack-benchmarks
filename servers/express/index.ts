@@ -1,4 +1,3 @@
-import Cors from "cors"
 import Joi from "joi"
 import express from "express"
 import bodyParser from "body-parser"
@@ -13,7 +12,6 @@ const schema = Joi.object().keys({
 
 express()
     .use(bodyParser())
-    .use(Cors())
     .get("/test", (req, res) => {
         res.send({ message: "Hello world!" })
     })
