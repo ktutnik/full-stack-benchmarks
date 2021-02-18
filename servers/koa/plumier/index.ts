@@ -39,7 +39,7 @@ export class TestController {
 // --------------------------------------------------------------------- //
 
 new Plumier()
-    .set(new WebApiFacility({ controller: TestController }))
+    .set(new WebApiFacility())
     .initialize()
     .then(x => {
         x.listen(3000)
