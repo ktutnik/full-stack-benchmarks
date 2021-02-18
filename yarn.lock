@@ -304,6 +304,13 @@
   dependencies:
     "@types/estree" "*"
 
+"@types/autocannon@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@types/autocannon/-/autocannon-4.1.0.tgz#be11908d3455c01a8603f86500090564332c099d"
+  integrity sha512-SrG28f0RENabY2jCrz/xfkKqpaxorBSi8EcVxiFrGtvzlWNqOFAw35ASqEclLqkQXwyldmJLXqxebeFa1479vA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/axios@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@types/axios/-/axios-0.14.0.tgz#ec2300fbe7d7dddd7eb9d3abf87999964cafce46"

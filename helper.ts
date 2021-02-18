@@ -1,28 +1,18 @@
-import cannon, { CannonResult, CannonOption } from "autocannon"
+import cannon from "autocannon"
 import { basename } from "path";
 import { fork } from "child_process";
-import axios, { AxiosRequestConfig } from "axios"
 
-export type BenchmarkOption = CannonOption & { baseFramework: string, path: string, silent?: boolean, env?: any, response: any }
+export type BenchmarkOption = cannon.Options & { baseFramework: string, path: string, silent?: boolean, env?: any, response: any }
 
 function delay(ms: number = 5000) {
     return new Promise(resolve => setTimeout(resolve, 2000))
-}
-
-function cannonAsync(opts: CannonOption) {
-    return new Promise<CannonResult>((resolve, reject) => {
-        cannon({ ...opts }, (err, result) => {
-            if (err) reject(err)
-            else resolve(result)
-        })
-    })
 }
 
 export async function benchmark(opt: BenchmarkOption) {
     const { path, silent, env, ...opts } = opt
     const process = fork(path, [], { silent, env })
     await delay()
-    const result = await cannonAsync(opts)
+    const result = await cannon(opts)
     process.kill('SIGINT')
     return {
         title: result.title,
